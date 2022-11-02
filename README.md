@@ -107,3 +107,65 @@ Commands for different technologies
     pm2 kill
     pm2 start /home/ubuntu/app/server/dist/main.js
     pm2 start 0
+
+# Web3 in React Native
+    -   reference: https://levelup.gitconnected.com/tutorial-how-to-set-up-web3js-1-x-with-react-native-0-6x-2021-467b2e0c94a4
+    -   npm i --save react-native-crypto react-native-randombytes
+    -   npm i --save-dev rn-nodeify@latest
+    -   ./node_modules/.bin/rn-nodeify --install
+    -   npm i base-64
+    -   update: metro.config.js
+    -   `const extraNodeModules = require('node-libs-browser');
+        module.exports = {
+            resolver: {
+                extraNodeModules,
+            },
+            transformer: {
+                    getTransformOptions: async () => ({
+                    transform: {
+                    experimentalImportSupport: false,
+                    inlineRequires: false,
+                    },
+                }),
+            },
+        };`
+    -   update: package.json
+    -   `"postinstall": "./node_modules/.bin/rn-nodeify --install 'crypto,buffer,react-native-randombytes,vm,stream,http,https,os,  url,net,fs' --hack"`
+    -   yarn install
+    -   update: shim.js (newly created in root)
+    -   `import {decode, encode} from 'base-64'
+        if (!global.btoa) global.btoa = encode
+        if (!global.atob) global.atob = decode
+        if (typeof __dirname === 'undefined') global.__dirname = '/'
+        if (typeof __filename === 'undefined') global.__filename = ''
+        if (typeof process === 'undefined') {
+            global.process = require('process')
+        } else {
+            const bProcess = require('process')
+            for (var p in bProcess) {
+                if (!(p in process)) {
+                    process[p] = bProcess[p]
+                }
+            }
+        }
+        process.browser = false
+        if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer
+        if (typeof location === 'undefined') global.location = { port: 80, protocol: 'https:' }
+        const isDev = typeof __DEV__ === 'boolean' && __DEV__
+        process.env['NODE_ENV'] = isDev ? 'development' : 'production'
+        if (typeof localStorage !== 'undefined') {
+            localStorage.debug = isDev ? '*' : ''
+        }
+        // If using the crypto shim, uncomment the following line to ensure
+        // crypto is loaded first, so it can populate global.crypto
+        require('crypto')`
+    -   npm i --save web3
+    -   update: app.js
+    -   import: `import './shim'`
+    -   you can use now Web3 in your app......
+    -   usage as follows
+    -   `import Web3 from 'web3'; 
+        const web3 = new Web3('http://localhost:7545');
+        const newWallet = web3.eth.accounts.wallet.create(1);
+        const newAccount = newWallet[0];
+        console.log(newAccount);`
