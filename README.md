@@ -104,13 +104,14 @@ To connect your PostgreSQL database in your VPS with pgAdmin4, you can follow th
 - Allow remote connections to your PostgreSQL server by modifying the PostgreSQL configuration file. You can usually find this file at **/etc/postgresql/{version}/main/postgresql.conf** on Ubuntu. Look for the **listen_addresses** parameter and change it to listen on your **VPS's IP address**. For example, **listen_addresses = '192.168.1.100'**.
 
 - In the same configuration file, locate the pg_hba.conf file and add an entry to allow access from your local machine.
+
 For example:
 
-        host    all             all             192.168.1.0/24            md5
+    host    all             all             192.168.1.0/24            md5
   
 or if you want to get access to this from anywhere you can try 
 
-        host    all             all             192.168.1.0/24            md5
+    host    all             all             192.168.1.0/24            md5
 
 - Restart the PostgreSQL service to apply the changes.
 
