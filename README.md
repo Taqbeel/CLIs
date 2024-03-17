@@ -97,15 +97,33 @@ Since the default “postgres” user does not have a password, you should set i
 
 To connect your PostgreSQL database in your VPS with pgAdmin4, you can follow these general steps:
 
-    - Install pgAdmin4 on your local machine if you haven't already.
+- Install pgAdmin4 on your local machine if you haven't already.
 
-    - Ensure that PostgreSQL is installed and running on your VPS.
+- Ensure that PostgreSQL is installed and running on your VPS.
 
-    - Allow remote connections to your PostgreSQL server by modifying the PostgreSQL configuration file. You can usually find this file at /etc/postgresql/{version}/main/postgresql.conf on Ubuntu. Look for the listen_addresses parameter and change it to listen on your VPS's IP address. For example, listen_addresses = '192.168.1.100'.
+- Allow remote connections to your PostgreSQL server by modifying the PostgreSQL configuration file. You can usually find this file at /etc/postgresql/{version}/main/postgresql.conf on Ubuntu. Look for the listen_addresses parameter and change it to listen on your VPS's IP address. For example, listen_addresses = '192.168.1.100'.
 
-    - In the same configuration file, locate the pg_hba.conf file and add an entry to allow access from your local machine. For example:
-    host    all             all             192.168.1.0/24            md5
+- In the same configuration file, locate the pg_hba.conf file and add an entry to allow access from your local machine. For example:
 
+        host    all             all             192.168.1.0/24            md5
+  
+or if you want to get access to this from anywhere you can try 
+
+        host    all             all             192.168.1.0/24            md5
+
+- Restart the PostgreSQL service to apply the changes.
+
+      sudo systemctl restart postgresql
+
+- Open pgAdmin4 on your local machine and create a new server connection. Provide the IP address of your VPS, the username, password, and the database name.
+
+- Test the connection to ensure that pgAdmin4 can successfully connect to your PostgreSQL server.
+
+Please note that allowing remote connections to your database server may introduce security risks, so ensure that you have appropriate firewall rules and security measures in place to protect your database.
+
+- Save the file and exit the editor.
+  - Update firewall settings:
+    - If you are using a firewall on your VPS, you will need to allow incoming traffic on the PostgreSQL port (default is 5432). You can use the following command to open the port:
 
     
 
