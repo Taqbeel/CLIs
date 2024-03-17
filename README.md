@@ -11,6 +11,7 @@ To install PostgreSQL, first refresh your server’s local package index:
     sudo apt update
 
 Then, install the Postgres package along with a **-contrib** package that adds some additional utilities and functionality:
+[r2h]: http://github.com/github/markup/tree/master/lib/github/commands/rest2html
 
     sudo apt install postgresql postgresql-contrib
 
