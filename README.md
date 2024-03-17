@@ -2,7 +2,7 @@
 Commands for different technologies
 
 
-# [Postgresql Ubuntu] (CLIs/blob/main/postgresql.md)
+# [Postgresql Ubuntu]: CLIs/blob/main/postgresql.md
 
 To install PostgreSQL, first refresh your server’s local package index:
     
