@@ -4,6 +4,8 @@ Commands for different technologies
 
 # [Postgresql Ubuntu]: CLIs/blob/main/postgresql.md
 
+[r2h]: http://github.com/github/markup/tree/master/lib/github/commands/rest2html
+
 To install PostgreSQL, first refresh your server’s local package index:
     
     sudo apt update
