@@ -58,6 +58,24 @@ The output will indicated which HTTP traffic is allowed:
     Nginx HTTP (v6)            ALLOW       Anywhere (v6)
 
 #### Step 3 – Checking your Web Server
+At the end of the installation process, Ubuntu 20.04 starts Nginx. The web server should already be up and running.
 
+We can check with the **systemd** init system to make sure the service is running by typing:
 
-      
+        systemctl status nginx
+
+        Output
+        ● nginx.service - A high performance web server and a reverse proxy server
+           Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+           Active: active (running) since Fri 2020-04-20 16:08:19 UTC; 3 days ago
+             Docs: man:nginx(8)
+         Main PID: 2369 (nginx)
+            Tasks: 2 (limit: 1153)
+           Memory: 3.5M
+           CGroup: /system.slice/nginx.service
+                   ├─2369 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+                   └─2380 nginx: worker process
+
+As confirmed by this out, the service has started successfully. However, the best way to test this is to actually request a page from Nginx.
+
+You can access the default Nginx landing page to confirm that the software is running properly by navigating to your server’s IP address. If you do not know your server’s IP address, you can find it by using the **(icanhazip.com)** tool, which will give you your public IP address as received from another location on the internet:
