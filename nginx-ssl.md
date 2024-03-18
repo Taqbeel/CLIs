@@ -78,4 +78,4 @@ We can check with the **systemd** init system to make sure the service is runnin
 
 As confirmed by this out, the service has started successfully. However, the best way to test this is to actually request a page from Nginx.
 
-You can access the default Nginx landing page to confirm that the software is running properly by navigating to your server’s IP address. If you do not know your server’s IP address, you can find it by using the **(icanhazip.com)** tool, which will give you your public IP address as received from another location on the internet:
+You can access the default Nginx landing page to confirm that the software is running properly by navigating to your server’s IP address. If you do not know your server’s IP address, you can find it by using the **[icanhazip.com]** tool, which will give you your public IP address as received from another location on the internet:
