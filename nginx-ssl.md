@@ -139,9 +139,10 @@ Next, create a sample index.html page using nano or your favorite editor:
 
     sudo nano /var/www/your_domain/html/index.html
     
-`Inside, add the following sample HTML:`
+Inside, add the following sample HTML:
 
-    /var/www/your_domain/html/index.html
+`/var/www/your_domain/html/index.html`
+    
     <html>
         <head>
             <title>Welcome to your_domain!</title>
@@ -152,65 +153,71 @@ Next, create a sample index.html page using nano or your favorite editor:
     </html>
 
 
-Save and close the file by pressing Ctrl+X to exit, then when prompted to save, Y and then Enter.
+Save and close the file by pressing **`Ctrl+X`** to exit, then when prompted to save, **`Y`** and then Enter.
 
-In order for Nginx to serve this content, it’s necessary to create a server block with the correct directives. Instead of modifying the default configuration file directly, let’s make a new one at /etc/nginx/sites-available/your_domain:
+In order for Nginx to serve this content, it’s necessary to create a server block with the correct directives. Instead of modifying the default configuration file directly, let’s make a new one at `/etc/nginx/sites-available/your_domain:`
 
-sudo nano /etc/nginx/sites-available/your_domain
+    sudo nano /etc/nginx/sites-available/your_domain
+    
 Paste in the following configuration block, which is similar to the default, but updated for our new directory and domain name:
 
-/etc/nginx/sites-available/your_domain
-server {
-        listen 80;
-        listen [::]:80;
+`/etc/nginx/sites-available/your_domain`
 
-        root /var/www/your_domain/html;
-        index index.html index.htm index.nginx-debian.html;
+    server {
+            listen 80;
+            listen [::]:80;
+    
+            root /var/www/your_domain/html;
+            index index.html index.htm index.nginx-debian.html;
+    
+            server_name your_domain www.your_domain;
+    
+            location / {
+                    try_files $uri $uri/ =404;
+            }
+    }
+    
+Notice that we’ve updated the **root** configuration to our new directory, and the **server_name** to our domain name.
 
-        server_name your_domain www.your_domain;
+Next, let’s enable the file by creating a link from it to the **sites-enabled** directory, which Nginx reads from during startup:
 
-        location / {
-                try_files $uri $uri/ =404;
-        }
-}
-Notice that we’ve updated the root configuration to our new directory, and the server_name to our domain name.
-
-Next, let’s enable the file by creating a link from it to the sites-enabled directory, which Nginx reads from during startup:
-
-sudo ln -s /etc/nginx/sites-available/your_domain /etc/nginx/sites-enabled/
-Note: Nginx uses a common practice called symbolic links, or symlinks, to track which of your server blocks are enabled. Creating a symlink is like creating a shortcut on disk, so that you could later delete the shortcut from the sites-enabled directory while keeping the server block in sites-available if you wanted to enable it.
+    sudo ln -s /etc/nginx/sites-available/your_domain /etc/nginx/sites-enabled/
+    
+***`Note:`*** `Nginx uses a common practice called symbolic links, or symlinks, to track which of your server blocks are enabled. Creating a symlink is like creating a shortcut on disk, so that you could later delete the shortcut from the` sites-enabled `directory while keeping the server block in` sites-available `if you wanted to enable it.`
 
 Two server blocks are now enabled and configured to respond to requests based on their listen and server_name directives (you can read more about how Nginx processes these directives here):
 
-your_domain: Will respond to requests for your_domain and www.your_domain.
-default: Will respond to any requests on port 80 that do not match the other two blocks.
-To avoid a possible hash bucket memory problem that can arise from adding additional server names, it is necessary to adjust a single value in the /etc/nginx/nginx.conf file. Open the file:
+- **your_domain:** Will respond to requests for **your_domain** and **www.your_domain.**
+- **default:** Will respond to any requests on port 80 that do not match the other two blocks.
+To avoid a possible hash bucket memory problem that can arise from adding additional server names, it is necessary to adjust a single value in the **`/etc/nginx/nginx.conf`** file. Open the file:
 
     sudo nano /etc/nginx/nginx.conf
     
-Find the server_names_hash_bucket_size directive and remove the # symbol to uncomment the line. If you are using nano, you can quickly search for words in the file by pressing CTRL and w.
+Find the **server_names_hash_bucket_size** directive and remove the `#` symbol to uncomment the line. If you are using nano, you can quickly search for words in the file by pressing `CTRL` and `w`.
 
-Note: Commenting out lines of code – usually by putting # at the start of a line – is another way of disabling them without needing to actually delete them. Many configuration files ship with multiple options commented out so that they can be enabled or disabled, by toggling them between active code and documentation.
+***`Note:`*** `Commenting out lines of code – usually by putting` # `at the start of a line – is another way of disabling them without needing to actually delete them. Many configuration files ship with multiple options commented out so that they can be enabled or disabled, by toggling them between active code and documentation.`
 
-/etc/nginx/nginx.conf
-...
-http {
-    ...
-    server_names_hash_bucket_size 64;
-    ...
-}
-...
+`/etc/nginx/nginx.conf`
+
+    http {
+        ...
+        server_names_hash_bucket_size 64;
+        ...
+    }
+
 Save and close the file when you are finished.
 
 Next, test to make sure that there are no syntax errors in any of your Nginx files:
 
-sudo nginx -t
+    sudo nginx -t
+    
 If there aren’t any problems, restart Nginx to enable your changes:
 
-sudo systemctl restart nginx
-Nginx should now be serving your domain name. You can test this by navigating to http://your_domain, where you should see something like this:
+    sudo systemctl restart nginx
+    
+Nginx should now be serving your domain name. You can test this by navigating to `http://your_domain`, where you should see something like this:
 
-
+    Success!  The your_domain server block is working!
 
 
 
