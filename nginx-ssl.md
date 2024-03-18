@@ -121,31 +121,37 @@ You have now learned basic management commands and should be ready to configure 
 #### Step 5 – Setting Up Server Blocks (Recommended)
 When using the Nginx web server, server blocks (similar to virtual hosts in Apache) can be used to encapsulate configuration details and host more than one domain from a single server. We will set up a domain called **your_domain**, but you should **replace this with your own domain name.**
 
-Nginx on Ubuntu 20.04 has one server block enabled by default that is configured to serve documents out of a directory at /var/www/html. While this works well for a single site, it can become unwieldy if you are hosting multiple sites. Instead of modifying /var/www/html, let’s create a directory structure within `/var/www` for our your_domain site, leaving /var/www/html in place as the default directory to be served if a client request doesn’t match any other sites.
+Nginx on Ubuntu 20.04 has one server block enabled by default that is configured to serve documents out of a directory at `/var/www/html`. While this works well for a single site, it can become unwieldy if you are hosting multiple sites. Instead of modifying `/var/www/html`, let’s create a directory structure within `/var/www` for our **your_domain** site, leaving `/var/www/html` in place as the default directory to be served if a client request doesn’t match any other sites.
 
-Create the directory for your_domain as follows, using the -p flag to create any necessary parent directories:
+Create the directory for **your_domain** as follows, using the **`-p`** flag to create any necessary parent directories:
 
-sudo mkdir -p /var/www/your_domain/html
+    sudo mkdir -p /var/www/your_domain/html
+    
 Next, assign ownership of the directory with the $USER environment variable:
 
-sudo chown -R $USER:$USER /var/www/your_domain/html
-The permissions of your web roots should be correct if you haven’t modified your umask value, which sets default file permissions. To ensure that your permissions are correct and allow the owner to read, write, and execute the files while granting only read and execute permissions to groups and others, you can input the following command:
+    sudo chown -R $USER:$USER /var/www/your_domain/html
+    
+The permissions of your web roots should be correct if you haven’t modified your **`umask`** value, which sets default file permissions. To ensure that your permissions are correct and allow the owner to read, write, and execute the files while granting only read and execute permissions to groups and others, you can input the following command:
 
-sudo chmod -R 755 /var/www/your_domain
+    sudo chmod -R 755 /var/www/your_domain
+    
 Next, create a sample index.html page using nano or your favorite editor:
 
-sudo nano /var/www/your_domain/html/index.html
-Inside, add the following sample HTML:
+    sudo nano /var/www/your_domain/html/index.html
+    
+`Inside, add the following sample HTML:`
 
-/var/www/your_domain/html/index.html
-<html>
-    <head>
-        <title>Welcome to your_domain!</title>
-    </head>
-    <body>
-        <h1>Success!  The your_domain server block is working!</h1>
-    </body>
-</html>
+    /var/www/your_domain/html/index.html
+    <html>
+        <head>
+            <title>Welcome to your_domain!</title>
+        </head>
+        <body>
+            <h1>Success!  The your_domain server block is working!</h1>
+        </body>
+    </html>
+
+
 Save and close the file by pressing Ctrl+X to exit, then when prompted to save, Y and then Enter.
 
 In order for Nginx to serve this content, it’s necessary to create a server block with the correct directives. Instead of modifying the default configuration file directly, let’s make a new one at /etc/nginx/sites-available/your_domain:
@@ -180,7 +186,8 @@ your_domain: Will respond to requests for your_domain and www.your_domain.
 default: Will respond to any requests on port 80 that do not match the other two blocks.
 To avoid a possible hash bucket memory problem that can arise from adding additional server names, it is necessary to adjust a single value in the /etc/nginx/nginx.conf file. Open the file:
 
-sudo nano /etc/nginx/nginx.conf
+    sudo nano /etc/nginx/nginx.conf
+    
 Find the server_names_hash_bucket_size directive and remove the # symbol to uncomment the line. If you are using nano, you can quickly search for words in the file by pressing CTRL and w.
 
 Note: Commenting out lines of code – usually by putting # at the start of a line – is another way of disabling them without needing to actually delete them. Many configuration files ship with multiple options commented out so that they can be enabled or disabled, by toggling them between active code and documentation.
