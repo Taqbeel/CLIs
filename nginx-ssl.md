@@ -220,4 +220,19 @@ Nginx should now be serving your domain name. You can test this by navigating to
     Success!  The your_domain server block is working!
 
 
+#### Remove/Uninstall Nginx
+
+Removes all but config files.
+
+    sudo apt-get remove nginx nginx-common
+
+Removes everything.
+
+    sudo apt-get purge nginx nginx-common
+
+After using any of the above commands, use this in order to remove dependencies used by nginx which are no longer required.
+
+    sudo apt-get autoremove
+
+
 
