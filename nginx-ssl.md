@@ -235,4 +235,79 @@ After using any of the above commands, use this in order to remove dependencies 
     sudo apt-get autoremove
 
 
+#### Connect your domain with instance and configuring SSL
 
+**Step 1:** First, stop nginx if already running
+
+    systemctl stop nginx
+
+**Step 2:** Run docker command to generate certificates for your domain and replace ***`custom.domain.com`*** with your actual **domain**
+
+    docker run -it --rm --name certbot \
+    -v "/root/letsencrypt:/etc/letsencrypt" \
+    -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
+    -p 80:80 \
+    certbot/certbot certonly --standalone -d custom.domain.com
+
+This docker command will generate certificates in **root/letsencrypt** but if you wish to keep these somewhere else you can specify your own path.
+
+**Step 3:** Now, we have to configure our nginx with certificates we have genrated for our domain.
+
+***`i:`*** Go to directory ***`site-available`***.
+
+    cd /etc/ngnix/sites-available
+
+***`ii:`*** (OPTIONAL): **Remove** the **default**.
+
+    rm default
+
+***`iii:`*** Now create the default file again
+
+    nano default
+    
+**Step 3:** Paste the below code in newly created default and dont forget to replace ***`custom.domain.com`*** with your actual **domain**
+
+    server {
+        listen 80;
+        server_name custom.domain.com;
+        return 301 https://$server_name$request_uri;
+    }
+    
+    server {
+        listen 443 ssl http2;
+        server_name custom.domain.com;
+    
+        ssl_certificate /root/letsencrypt/live/custom.domain.com/fullchain.pem;
+        ssl_certificate_key /root/letsencrypt/live/custom.domain.com/privkey.pem;
+        ssl_session_timeout 1d;
+        ssl_session_cache shared:SSL:50m;
+        ssl_session_tickets off;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:ECDHE-RSA-AES128-GCM-SHA256:AES256+EECDH:DHE-RSA-AES128-GCM-SHA256:AES256+EDH:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+        ssl_prefer_server_ciphers on;
+        client_max_body_size 100m;
+    
+        location / {
+            add_header X-Frame-Options "SAMEORIGIN" always;
+            add_header X-XSS-Protection "1; mode=block" always;
+            add_header X-Content-Type-Options "nosniff" always;
+            add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+            proxy_pass http://127.0.0.1:3000;
+            proxy_set_header Host custom.domain.com;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_read_timeout 600s;
+        }
+    }
+
+***`proxy_pass http://127.0.0.1:3000`*** update this **ip** and **port** if you are running your app in docker.
+
+**Step 4:** Restart nginx
+
+    systemctl restart nginx
+
+**Hurrah!** visit your domain ***`custom.domain.com`*** and you will see the app you have deployed in you instance.
